@@ -48,3 +48,13 @@ The solve tests cover:
 ## Files
 - `Project2/main.py`: CSP solver implementation
 - `Project2/test.py`: unit tests
+
+## Large graph note
+The current solver works for small and medium graphs.
+For very large graphs such as `gc_1377121623225900.txt`, runtime and memory can become too high.
+
+The following optimizations can improve scale:
+- replace full domain copies with in-place updates and undo logs,
+- use incremental AC-3 instead of rebuilding the full arc queue each step,
+- run forward checking before full propagation,
+- use compact domain storage such as bitmasks.
