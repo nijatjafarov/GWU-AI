@@ -15,10 +15,10 @@ It also removes duplicate undirected edges by storing each edge in sorted order.
 
 ## CSP method used
 The solver uses backtracking search with:
-- `MRV` to pick the next variable
+- `MRV` (Minimum Remaining Values) to pick the next variable
 - a degree-based tie break inside `MRV`
-- `LCV` to order color values
-- `AC-3` for constraint propagation
+- `LCV` (Least Constraining Value) to order color values
+- `AC-3` (Arc Consistency Algorithm #3) for constraint propagation
 
 At each step, the code:
 1. picks one unassigned vertex with MRV,
