@@ -97,7 +97,7 @@ def solve(path):
 
 
 if __name__ == "__main__":
-    solution = solve("gc_78317094521100.txt")
+    solution = solve("test3.txt")
 
     if solution is None:
         print("No solution found.")
