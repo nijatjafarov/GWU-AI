@@ -1,0 +1,94 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+
+\title{Project 2 Report: CSP Graph Coloring}
+\author{Nijat Jafarov \and Fatulla Bashirov}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{Problem Summary}
+This assignment solves graph coloring as a Constraint Satisfaction Problem (CSP).
+Each vertex must get one color.
+Two connected vertices cannot share the same color.
+
+The input file contains:
+\begin{itemize}
+\item comment lines that start with \texttt{\#},
+\item one line for the number of colors, for example \texttt{colors = 4},
+\item undirected edges written as \texttt{u,v}.
+\end{itemize}
+
+\section{Algorithm Choice}
+The implementation uses backtracking search with CSP heuristics and constraint propagation.
+The main components are:
+\begin{itemize}
+\item \textbf{MRV (Minimum Remaining Values):} choose the unassigned vertex with the smallest remaining domain.
+\item \textbf{Tie break with degree:} if MRV ties, choose the vertex with higher degree.
+\item \textbf{LCV (Least Constraining Value):} try colors that reduce neighbor options the least.
+\item \textbf{AC-3:} enforce arc consistency after each assignment.
+\end{itemize}
+
+\section{How the Solver Works}
+The solver follows these steps:
+\begin{enumerate}
+\item Parse the input file and build the graph.
+\item Create one domain per vertex: \texttt{\{0,1,\dots,k-1\}}.
+\item Run AC-3 once to remove values that already violate constraints.
+\item Start backtracking:
+\begin{itemize}
+\item select a vertex with MRV and degree tie break,
+\item order candidate colors with LCV,
+\item assign one color and run AC-3 again,
+\item recurse if domains stay non-empty,
+\item backtrack on failure.
+\end{itemize}
+\item Return the full assignment if found; otherwise return \texttt{None}.
+\end{enumerate}
+
+\section{Why These Heuristics Help}
+MRV picks hard vertices early, so failures appear sooner.
+The degree tie break picks vertices that constrain many neighbors.
+LCV keeps more choices open for future steps.
+AC-3 removes impossible values before deep recursion.
+Together, these reduce unnecessary search compared with plain backtracking.
+
+\section{Implementation Notes}
+The code is in:
+\begin{itemize}
+\item \texttt{main.py}: solver implementation,
+\item \texttt{test.py}: unit tests for parser, graph build, AC-3, heuristics, and full solve cases.
+\end{itemize}
+
+The parser removes duplicate undirected edges by sorting edge endpoints.
+It also ignores self-loops.
+
+\section{How to Run}
+From the \texttt{Project2} directory:
+
+\textbf{Run solver}
+\begin{verbatim}
+python main.py
+\end{verbatim}
+
+\textbf{Run tests}
+\begin{verbatim}
+python -m unittest test.py
+\end{verbatim}
+
+\section{Limits and Scale}
+This is still an exact CSP search method, so worst-case runtime is exponential.
+For very large graphs, runtime and memory can become high.
+To scale further, practical next steps are:
+\begin{itemize}
+\item avoid full domain copies and use in-place updates with undo logs,
+\item use incremental AC-3 queues instead of full queue rebuilds,
+\item add forward checking before full propagation,
+\item use compact domain structures such as bitmasks.
+\end{itemize}
+
+\end{document}
